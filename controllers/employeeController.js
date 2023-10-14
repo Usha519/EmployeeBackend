@@ -16,14 +16,15 @@ const getAllEmployee=asyncHandler(async(req,res)=>{
 
 const createEmployee=asyncHandler(async(req,res)=>{
     console.log("the req body is : ",req.body);
-    const {name,email,phone}=req.body;
-    if(!name || !email || !phone){
+    const {name,email,doj,phone}=req.body;
+    if(!name || !email || !doj ||!phone){
         res.status(400);
         throw new Error('All fields are mandatory!')
     }
     const employee=await Employee.create({
         name,
         email,
+        doj,
         phone,
         user_id:req.user.id
     });

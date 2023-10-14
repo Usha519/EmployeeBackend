@@ -14,6 +14,10 @@ const employeeSchema=mongoose.Schema({
         type:String,
         required:[true,"please add the employee email address"],
     },
+    doj:{
+        type:String,
+        required:[true,"please add the date of join"],
+    },
     phone:{
        type:String,
        required:[true,"please add the employee phone number"],
