@@ -54,6 +54,45 @@ const getAttendanceByDate = asyncHandler(async (req, res) => {
 
 // Your Attendance model definition remains the same
 
+const updateAttendance = asyncHandler(async (req, res) => {
+  try {
+    const attendanceId = req.params.id;
+    const newStatus = req.body.status; // Assuming you pass the new status in the request body
+
+    // Find the attendance record by ID
+    const attendance = await Attendance.findById(attendanceId);
+
+    if (!attendance) {
+      res.status(404);
+      throw new Error('Attendance not found');
+    }
+
+    // Check if the provided date matches the date in the attendance record
+    if (attendance.date !== req.body.date) {
+      res.status(403);
+      throw new Error('User does not have permission to update this attendance');
+    }
+
+    // Find the attendee in the attendees array by ID
+    const attendeeToUpdate = attendance.attendees.find((attendee) => attendee._id === req.body.attendeeId);
+
+    if (!attendeeToUpdate) {
+      res.status(404);
+      throw new Error('Attendee not found in the attendance record');
+    }
+
+    // Update the status of the attendee
+    attendeeToUpdate.status = newStatus;
+
+    // Save the updated attendance record
+    const updatedAttendance = await attendance.save();
+
+    res.status(200).json({ data: updatedAttendance });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
- module.exports={ createAttendance,getAllAttendance, getAttendanceByDate};
+
+ module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, updateAttendance};
