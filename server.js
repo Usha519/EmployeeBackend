@@ -22,4 +22,3 @@ app.use(errorHandler);
 app.listen(port,()=>{  
     console.log(`server running in port ${port}`);      
 }); 
-

@@ -35,19 +35,25 @@ const createAttendance = asyncHandler(async (req, res) => {
     res.json({ status: "200", data: { attendance } });
   });
 
- //@des get employee
-//@route GET /api/employee/:id
-//@access private
+//  @des get employee
+// @route GET /api/employee/:id
+// @access private
 
-// const getEmployee=asyncHandler(async(req,res)=>{
-//     const employee=await Employee.findById(req.params.id);
-//     if(!employee){
-//         res.status(404);
-//         throw new Error("employee not found");
-//     }
-//     res.json({status:"200",data:{employee}});
-// });
+const getAttendanceByDate = asyncHandler(async (req, res) => {
+  const date = req.params.date; // Assuming you pass the date as a parameter in the route
+  // console.log("Date:", date);
+  const attendance = await Attendance.find({ date }); // Find attendance records for the specified date
+
+  if (!attendance || attendance.length === 0) {
+    res.status(404);
+    throw new Error("Attendance records not found for the specified date");
+  }
+
+  res.status(200).json({ data: attendance });
+});
+
+// Your Attendance model definition remains the same
 
 
 
- module.exports={ createAttendance,getAllAttendance};
+ module.exports={ createAttendance,getAllAttendance, getAttendanceByDate};
