@@ -52,11 +52,45 @@ const getAttendanceByDate = asyncHandler(async (req, res) => {
   res.json({status:"200", data: {attendance}});
 });
 
+// const updateAttendance = asyncHandler(async (req, res) => {
+//   try {
+//     const employeeId = req.params.employeeId;
+//     const date = req.params.date;
+//     const newStatus = req.body.status;
+
+//     // Find the attendance record for the specified date
+//     const attendance = await Attendance.findOne({ date });
+
+//     if (!attendance) {
+//       res.status(404);
+//       throw new Error('Attendance not found');
+//     }
+
+//     // Find the attendee in the attendees array by employee ID
+//     const attendeeToUpdate = attendance.attendees.find((attendee) => attendee._id === employeeId);
+
+//     if (!attendeeToUpdate) {
+//       res.status(404);
+//       throw new Error('Employee not found in the attendance record');
+//     }
+
+//     // Update the status of the attendee
+//     attendeeToUpdate.status = newStatus;
+
+//     // Save the updated attendance record
+//     const updatedAttendance = await attendance.save();
+
+//     res.status(200).json({ data: updatedAttendance });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+
 const updateAttendance = asyncHandler(async (req, res) => {
   try {
-    const employeeId = req.params.employeeId;
     const date = req.params.date;
-    const newStatus = req.body.status;
+    const updatedAttendees = req.body.attendees; // This should be an array of attendee objects with _id and status
 
     // Find the attendance record for the specified date
     const attendance = await Attendance.findOne({ date });
@@ -66,16 +100,13 @@ const updateAttendance = asyncHandler(async (req, res) => {
       throw new Error('Attendance not found');
     }
 
-    // Find the attendee in the attendees array by employee ID
-    const attendeeToUpdate = attendance.attendees.find((attendee) => attendee._id === employeeId);
-
-    if (!attendeeToUpdate) {
-      res.status(404);
-      throw new Error('Employee not found in the attendance record');
-    }
-
-    // Update the status of the attendee
-    attendeeToUpdate.status = newStatus;
+    // Loop through the updatedAttendees array and update the status for the corresponding attendees
+    updatedAttendees.forEach((updatedAttendee) => {
+      const attendeeToUpdate = attendance.attendees.find((attendee) => attendee._id === updatedAttendee._id);
+      if (attendeeToUpdate) {
+        attendeeToUpdate.status = updatedAttendee.status;
+      }
+    });
 
     // Save the updated attendance record
     const updatedAttendance = await attendance.save();
@@ -85,7 +116,6 @@ const updateAttendance = asyncHandler(async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 
  module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, updateAttendance};
