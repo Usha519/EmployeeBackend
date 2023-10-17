@@ -49,7 +49,7 @@ const getAttendanceByDate = asyncHandler(async (req, res) => {
     throw new Error("Attendance records not found for the specified date");
   }
 
-  res.status(200).json({ data: attendance });
+  res.json({status:"200", data: {attendance}});
 });
 
 const updateAttendance = asyncHandler(async (req, res) => {
