@@ -52,6 +52,28 @@ const getAttendanceByDate = asyncHandler(async (req, res) => {
   res.json({status:"200", data: {attendance}});
 });
 
+const getAttendanceByName = asyncHandler(async (req, res) => {
+  try {
+    const name = req.params.name; // Assuming you pass the name as a parameter in the route
+    const attendance = await Attendance.find({ 'attendees.name': name });
+
+    if (!attendance || attendance.length === 0) {
+      res.status(404).json({ status: 404, error: "Attendance records not found for the specified name" });
+    } else {
+      // Filter the attendance records to include only the relevant attendee
+      const filteredAttendance = attendance.map(record => {
+        const attendees = record.attendees.filter(attendee => attendee.name === name);
+        return { ...record._doc, attendees };
+      });
+
+      res.status(200).json({ status: 200, data: { attendance: filteredAttendance } });
+    }
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ status: 500, error: "Error fetching attendance records by name" });
+  }
+});
+
 // const updateAttendance = asyncHandler(async (req, res) => {
 //   try {
 //     const employeeId = req.params.employeeId;
@@ -117,5 +139,59 @@ const updateAttendance = asyncHandler(async (req, res) => {
   }
 });
 
+const getLastAttendance = asyncHandler(async (req, res) => {
+  try {
+    // Calculate the date 3 days ago
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
- module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, updateAttendance};
+    const allAttendance = await Attendance.find({
+      date: { $gte: threeDaysAgo.toISOString() } // Filter records from the last 3 days
+    });
+
+    res.json({ status: "200", data: { allAttendance } });
+  } catch (error) {
+    res.status(500).json({ status: "500", message: "Internal Server Error", error: error.message });
+  }
+});
+
+
+// const getLastAttendance = asyncHandler(async (req, res) => {
+//   const perPage = 10; // Number of attendees per page
+//   const page = parseInt(req.query.page) || 1; // Current page, defaulting to 1
+
+//   try {
+//     const lastDate = new Date(); // Get the current date
+//     lastDate.setHours(0, 0, 0, 0); // Set the time to midnight
+//     const result = await Attendance.aggregate([
+//       // Match records with dates less than or equal to the lastDate
+//       { $match: { date: { $lte: lastDate } } },
+//       // Sort by date in descending order (most recent first)
+//       { $sort: { "date": -1 } },
+//       // Group by date and accumulate attendees in an array
+//       { $group: { _id: "$date", attendees: { $push: "$attendees" } } },
+//       // Skip records for pagination
+//       { $skip: (page - 1) * perPage },
+//       // Project only the necessary fields
+//       {
+//         $project: {
+//           _id: 0,
+//           date: "$_id",
+//           attendees: { $slice: ["$attendees", 0, perPage] }
+//         }
+//       }
+//     ]);
+
+//     if (!result || result.length === 0) {
+//       return res.status(404).json({ status: "404", message: "No attendance records found for the specified date range." });
+//     }
+
+//     res.status(200).json({ status: "200", data: result });
+//   } catch (error) {
+//     res.status(500).json({ status: "500", message: "Error fetching attendance records" });
+//   }
+// });
+
+
+
+ module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, getAttendanceByName,updateAttendance, getLastAttendance};
