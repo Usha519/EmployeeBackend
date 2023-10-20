@@ -2,7 +2,7 @@ const express=require('express');
 const router=express.Router();
 
 
-const {createAttendance,getAllAttendance, getAttendanceByDate, updateAttendance, getAttendanceByName, getLastAttendance}= require('../controllers/attendanceController');
+const {createAttendance,getAllAttendance, getAttendanceByDate, updateAttendance, getAttendanceByName, getLastAttendance, getAttendanceBetweenDates}= require('../controllers/attendanceController');
 const validateToken = require('../middleware/validateTokenHandler');
 
 router.use(validateToken);
@@ -12,6 +12,8 @@ router.route('/getAllAttendance').get(getAllAttendance);
 router.route('/getAttendance/:date').get(getAttendanceByDate);
 router.route('/byName/:name').get(getAttendanceByName);
 router.route('/getThreeAttendance').get(getLastAttendance);
+router.route('/getBetweenDates').get(getAttendanceBetweenDates);
+
 
  
 module.exports=router;    

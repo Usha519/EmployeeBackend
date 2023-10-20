@@ -14,6 +14,29 @@ const getAllAttendance = asyncHandler(async (req, res) => {
   }
 });
 
+const getAttendanceBetweenDates = asyncHandler(async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Check if startDate and endDate are provided in the query
+    if (!startDate || !endDate) {
+      return res.status(400).json({ status: "400", message: "Start and end dates are required." });
+    }
+
+    // Find attendance records between the selected dates
+    const allAttendance = await Attendance.find({
+      date: {
+        $gte: startDate, // Greater than or equal to the start date
+        $lte: endDate,   // Less than or equal to the end date
+      }
+    });
+
+    res.json({ status: "200", data: { allAttendance } });
+  } catch (error) {
+    res.status(500).json({ status: "500", message: "Internal Server Error", error: error.message });
+  }
+});
+
  //@des create attendance for new day
 //@route POST /api/employee
 //@access private
@@ -194,4 +217,4 @@ const getLastAttendance = asyncHandler(async (req, res) => {
 
 
 
- module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, getAttendanceByName,updateAttendance, getLastAttendance};
+ module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, getAttendanceByName,updateAttendance, getLastAttendance, getAttendanceBetweenDates};
