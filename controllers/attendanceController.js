@@ -17,19 +17,26 @@ const getAllAttendance = asyncHandler(async (req, res) => {
 const getAttendanceBetweenDates = asyncHandler(async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    const page = parseInt(req.query.page) || 1; // Get the requested page number from the query parameters
+    const limit = parseInt(req.query.limit) || 7; // Set a default limit or get it from query parameters
 
     // Check if startDate and endDate are provided in the query
     if (!startDate || !endDate) {
       return res.status(400).json({ status: "400", message: "Start and end dates are required." });
     }
 
-    // Find attendance records between the selected dates
+    // Calculate the skip value based on the page and limit
+    const skip = (page - 1) * limit;
+
+    // Find attendance records between the selected dates with pagination
     const allAttendance = await Attendance.find({
       date: {
         $gte: startDate, // Greater than or equal to the start date
         $lte: endDate,   // Less than or equal to the end date
       }
-    });
+    })
+      .skip(skip)
+      .limit(limit);
 
     res.json({ status: "200", data: { allAttendance } });
   } catch (error) {
