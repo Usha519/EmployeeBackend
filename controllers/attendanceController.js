@@ -164,12 +164,12 @@ const updateAttendance = asyncHandler(async (req, res) => {
 
 const getLastAttendance = asyncHandler(async (req, res) => {
   try {
-    // Calculate the date 3 days ago
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    // Calculate the date 7 days ago
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const allAttendance = await Attendance.find({
-      date: { $gte: threeDaysAgo.toISOString() } // Filter records from the last 3 days
+      date: { $gte: sevenDaysAgo.toISOString() } // Filter records from the last 7 days
     });
 
     res.json({ status: "200", data: { allAttendance } });
