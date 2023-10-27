@@ -111,7 +111,7 @@ const updateAttendance = asyncHandler(async (req, res) => {
     // Save the updated attendance record
     const updatedAttendance = await attendance.save();
 
-    res.status(200).json({ data: updatedAttendance });
+    res.json({status:"200",data:{updatedAttendance}})
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
