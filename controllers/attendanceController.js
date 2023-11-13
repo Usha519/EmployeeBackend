@@ -14,6 +14,33 @@ const getAllAttendance = asyncHandler(async (req, res) => {
   }
 });
 
+const WeekAttendance = asyncHandler(async (req, res) => {
+  try {
+    // Assuming the selected date is provided in the request query parameter named 'selectedDate'
+    const selectedDate = req.params.selectedDate;
+
+    // Validate that the selected date is in the correct format
+    const isValidDate = !isNaN(new Date(selectedDate).getTime());
+    if (!isValidDate) {
+      return res.status(400).json({ status: "400", message: "Invalid date format" });
+    }
+
+    // Calculate the date 7 days ago from the selected date
+    const sevenDaysAgo = new Date(selectedDate);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // Find attendance records within the specified date range
+    const attendanceWithinRange = await Attendance.find({
+      date: { $gte: sevenDaysAgo.toISOString(), $lte: selectedDate }
+    }).sort({ date: -1 });
+
+    res.json({ status: "200", data: { attendanceWithinRange } });
+  } catch (error) {
+    res.status(500).json({ status: "500", message: "Internal Server Error", error: error.message });
+  }
+});
+
+
 
 // const getAttendanceBetweenDates = asyncHandler(async (req, res) => {
 //   try {
@@ -245,4 +272,4 @@ const getLastAttendance = asyncHandler(async (req, res) => {
 
 
 
- module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, getAttendanceByName,updateAttendance, getLastAttendance, getAttendanceBetweenDates};
+ module.exports={ createAttendance,getAllAttendance, getAttendanceByDate, getAttendanceByName,updateAttendance, WeekAttendance,getLastAttendance, getAttendanceBetweenDates};
