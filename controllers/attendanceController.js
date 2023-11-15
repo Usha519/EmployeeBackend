@@ -52,7 +52,7 @@ const AttendanceForNextWeek = asyncHandler(async (req, res) => {
 
     // Calculate the date 7 days later
     const sevenDaysLater = new Date(selectedDate);
-    sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+    sevenDaysLater.setDate(sevenDaysLater.getDate() + 6);
 
     // Find attendance records within the specified date range
     const attendanceWithinRange = await Attendance.find({
