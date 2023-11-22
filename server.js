@@ -10,12 +10,15 @@ const app=express();
 
 
 const port=process.env.PORT || 5000;  
-app.use(cors()) 
+app.use(cors({
+    origin: 'https://prod.d25jsynkfjvsj.amplifyapp.com',
+    methods: 'OPTIONS,POST,GET',
+    allowedHeaders: 'Content-Type',
+  }))
 app.use(express.json());  
 app.use(express.urlencoded({extended:true}));
 
 // app.use(express.static(path.join(__dirname,'dist/employee-reports')));
-
 app.use("/api/employee",require("./routes/employeeRoutes"));
 app.use("/api/users",require("./routes/userRoutes")); 
 app.use("/api/attendance",require("./routes/attendanceRoutes"))  ;
