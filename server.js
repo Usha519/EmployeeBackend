@@ -11,10 +11,10 @@ const app=express();
 
 const port=process.env.PORT || 5000;  
 app.use(cors({
-    origin: 'https://prod.d25jsynkfjvsj.amplifyapp.com',
-    methods: 'OPTIONS,POST,GET',
-    allowedHeaders: 'Content-Type',
-  }))
+    origin: 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow cookies, authorization headers, etc. to be sent
+  }));
 app.use(express.json());  
 app.use(express.urlencoded({extended:true}));
 
