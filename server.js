@@ -11,7 +11,7 @@ const app=express();
 
 const port=process.env.PORT || 5000;  
 app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', 'https://prod.d2wi8ng5v8y3j1.amplifyapp.com'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow cookies, authorization headers, etc. to be sent
   }));
